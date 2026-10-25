@@ -1,0 +1,849 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bài Kiểm Tra Hóa Học 12</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
+    <!-- MathJax Configuration cho Hóa học và Toán học -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                packages: {'[+]': ['mhchem']}
+            },
+            loader: {load: ['[tex]/mhchem']},
+            startup: {
+                pageReady: () => {
+                    return MathJax.startup.defaultPageReady();
+                }
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #db2777 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        /* Tùy chỉnh thanh cuộn */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        /* Hiệu ứng Radio Button Custom */
+        .custom-radio input[type="radio"] { display: none; }
+        .custom-radio .radio-mark {
+            width: 20px; height: 20px; border: 2px solid #cbd5e1; border-radius: 50%;
+            display: inline-block; position: relative; margin-right: 10px; transition: all 0.2s;
+        }
+        .custom-radio input[type="radio"]:checked + .radio-mark { border-color: #4f46e5; }
+        .custom-radio input[type="radio"]:checked + .radio-mark::after {
+            content: ''; position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%); width: 10px; height: 10px;
+            background: #4f46e5; border-radius: 50%;
+        }
+        .option-label {
+            display: flex; align-items: center; padding: 12px 16px; margin-bottom: 8px;
+            border-radius: 8px; border: 1px solid #e2e8f0; cursor: pointer;
+            transition: all 0.2s; background: white;
+        }
+        .option-label:hover:not(.locked) { background: #f8fafc; border-color: #cbd5e1; }
+        .custom-radio input[type="radio"]:checked ~ .option-text { font-weight: 500; color: #4f46e5; }
+        .option-label.locked { cursor: not-allowed; opacity: 0.8; }
+        
+        /* Hiệu ứng cho T/F buttons */
+        .tf-btn {
+            padding: 8px 16px; border: 1px solid #cbd5e1; border-radius: 6px; cursor: pointer;
+            transition: all 0.2s; font-weight: 500; text-align: center; background: white;
+        }
+        .tf-btn.selected-true { background: #dcfce7; border-color: #22c55e; color: #166534; }
+        .tf-btn.selected-false { background: #fee2e2; border-color: #ef4444; color: #991b1b; }
+        .tf-btn.locked { cursor: not-allowed; opacity: 0.8; }
+        /* Pulse cho cảnh báo giờ */
+        @keyframes pulse-red {
+            0% { color: #ef4444; }
+            50% { color: #991b1b; }
+            100% { color: #ef4444; }
+        }
+        .time-warning { animation: pulse-red 2s infinite; font-weight: 700; }
+        .time-critical { animation: pulse-red 1s infinite; font-weight: 700; color: #ef4444; }/* 1. NỀN TOÀN TRANG: ảnh a.png */
+
+body {
+
+    background-color: #dceefa;
+
+    background-image: url("./a.png");
+
+    background-position: center center;
+
+    background-size: cover;
+
+    background-repeat: no-repeat;
+
+    background-attachment: fixed;
+
+}
+
+
+
+/* 2. NỀN KHUNG ĐĂNG NHẬP Ở GIỮA: ảnh bt.png */
+
+#login-screen > .glass-panel {
+
+    background-color: #eaf5df;
+
+    background-image:
+
+        linear-gradient(
+
+            rgba(255, 255, 255, 0.5),
+
+            rgba(255, 255, 255, 0.5)
+
+        ),
+
+        url("./bt.png");
+
+    background-position: center center;
+
+    background-size: cover;
+
+    background-repeat: no-repeat;
+
+    backdrop-filter: none;
+
+}
+
+
+
+/* Giữ ô nhập rõ chữ trên nền ảnh */
+
+#login-screen input {
+
+    background-color: rgba(255, 255, 255, 0.95);
+
+}
+    </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-indigo-200 selection:text-indigo-900 pb-20">
+    <!-- Watermark Giáo viên -->
+    <div class="fixed bottom-2 left-2 text-white/70 text-xs font-medium z-50 pointer-events-none drop-shadow-md">
+        Cô Nguyễn Thị Minh Nguyệt
+    </div>
+    <!-- Màn hình Đăng nhập -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-md p-8 rounded-2xl">
+            <div class="text-center mb-8">
+                <h1 class="text-2xl font-bold text-indigo-900 mb-2">BÀI KIỂM TRA HÓA HỌC 12</h1>
+                <p class="text-slate-600 font-medium">Thời gian: 40 phút</p>
+            </div>
+            
+            <form id="login-form" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1" for="studentName">Họ và tên học sinh</label>
+                    <input type="text" id="studentName" required autocomplete="off"
+                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors bg-white/80"
+                        placeholder="Nhập đầy đủ họ và tên">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1" for="studentClass">Lớp</label>
+                    <input type="text" id="studentClass" required autocomplete="off"
+                        class="w-full px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors bg-white/80"
+                        placeholder="Ví dụ: 12A1">
+                </div>
+                
+                <div id="login-error" class="hidden text-red-600 text-sm font-medium text-center bg-red-50 p-2 rounded"></div>
+                <button type="submit" id="btn-start"
+                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-lg hover:shadow-xl flex justify-center items-center">
+                    <span>Bắt đầu làm bài</span>
+                    <svg id="start-spinner" class="animate-spin ml-2 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
+    <!-- Màn hình Làm bài -->
+    <div id="test-screen" class="hidden max-w-4xl mx-auto pt-6 px-4">
+        
+        <!-- Sticky Header -->
+        <div class="sticky top-4 z-40 glass-panel rounded-xl p-4 mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h2 class="text-lg font-bold text-indigo-900 line-clamp-1">HÓA HỌC 12 - <span id="display-name"></span> (<span id="display-class"></span>)</h2>
+                <div class="text-sm font-medium text-slate-600 mt-1">Đã làm: <span id="progress-count">0</span>/28 câu</div>
+            </div>
+            <div class="bg-indigo-50 border border-indigo-100 rounded-lg px-6 py-2 shadow-inner text-center">
+                <div class="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-1">Thời gian còn lại</div>
+                <div id="timer-display" class="text-3xl font-mono font-bold text-indigo-900 tracking-tight">40:00</div>
+            </div>
+        </div>
+        <!-- Nội dung đề thi -->
+        <div id="questions-container" class="space-y-8">
+            <!-- Render bằng JS -->
+        </div>
+        <!-- Submit Section -->
+        <div class="mt-10 mb-20 flex justify-center">
+            <button id="btn-submit" 
+                class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-4 px-12 rounded-xl text-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 flex items-center">
+                <span>Nộp bài</span>
+                <svg id="submit-spinner" class="animate-spin ml-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <!-- Modal Kết quả -->
+    <div id="result-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="glass-panel w-full max-w-lg p-8 rounded-2xl relative">
+            <h3 class="text-2xl font-bold text-center text-indigo-900 mb-6 border-b pb-4">KẾT QUẢ BÀI LÀM</h3>
+            
+            <div class="space-y-3 text-slate-700 mb-6">
+                <div class="flex justify-between border-b border-slate-100 pb-2">
+                    <span class="font-medium">Học sinh:</span>
+                    <span id="res-name" class="font-bold"></span>
+                </div>
+                <div class="flex justify-between border-b border-slate-100 pb-2">
+                    <span class="font-medium">Lớp:</span>
+                    <span id="res-class" class="font-bold"></span>
+                </div>
+                <div class="flex justify-between border-b border-slate-100 pb-2">
+                    <span class="font-medium">Tổng điểm:</span>
+                    <span id="res-total-score" class="font-bold text-2xl text-pink-600"></span><span class="text-sm self-end pb-1 text-slate-500">/10.00</span>
+                </div>
+                <div class="grid grid-cols-3 gap-4 py-2">
+                    <div class="text-center bg-indigo-50 p-2 rounded">
+                        <div class="text-xs text-slate-500">PHẦN 1</div>
+                        <div id="res-p1-score" class="font-bold text-indigo-700"></div>
+                    </div>
+                    <div class="text-center bg-indigo-50 p-2 rounded">
+                        <div class="text-xs text-slate-500">PHẦN 2</div>
+                        <div id="res-p2-score" class="font-bold text-indigo-700"></div>
+                    </div>
+                    <div class="text-center bg-indigo-50 p-2 rounded">
+                        <div class="text-xs text-slate-500">PHẦN 3</div>
+                        <div id="res-p3-score" class="font-bold text-indigo-700"></div>
+                    </div>
+                </div>
+                <div class="flex justify-between text-sm mt-4">
+                    <span class="text-slate-500">Thời gian làm bài:</span>
+                    <span id="res-duration" class="font-medium"></span>
+                </div>
+                <div class="flex flex-col gap-1 text-sm bg-slate-50 p-3 rounded mt-2 border border-slate-100">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        <span id="res-sheet-status">Đã lưu điểm vào hệ thống</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <svg id="icon-drive-status" class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        <span id="res-drive-status">Đã lưu chi tiết bài làm</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-4 mt-8">
+                <button id="btn-show-answers" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-colors">
+                    Hiện đáp án
+                </button>
+                <button id="btn-logout" class="flex-1 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-3 px-4 rounded-lg transition-colors">
+                    Đăng xuất / Kết thúc
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- JavaScript Logic -->
+    <script>
+        
+        // ---------------------------------------------------------
+        // THIẾT LẬP URL APPS SCRIPT Ở ĐÂY
+        // ---------------------------------------------------------
+        const APPS_SCRIPT_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyx80u3TayOhWPat694hfr7ohNbWTv9RSxHvoPgeXRmCFzO89LkpUKsC9wKK-DSlg-d1Q/exec";
+        const TOTAL_TIME_SEC = 40 * 60; // 40 phút
+        // ---------------------------------------------------------
+        // DỮ LIỆU ĐỀ THI (Cập nhật môn Hóa 12)
+        // ---------------------------------------------------------
+        const examSource = {
+            part1: [
+                { id: "P1Q01", sourceNum: 1, text: "Amine được xem là dẫn xuất của", plainText: "Amine được xem là dẫn xuất của", options: [{key: "A", text: "methane."}, {key: "B", text: "ammonia."}, {key: "C", text: "ethanol."}, {key: "D", text: "ethene."}], correctAnswer: "B" },
+                { id: "P1Q02", sourceNum: 2, text: "Chất nào sau đây là amine bậc một?", plainText: "Chất nào sau đây là amine bậc một?", options: [{key: "A", text: "(CH₃)₃N."}, {key: "B", text: "CH₃NHCH₃."}, {key: "C", text: "CH₃CH₂NH₂."}, {key: "D", text: "C₆H₅NHCH₃."}], correctAnswer: "C" },
+                { id: "P1Q03", sourceNum: 3, text: "Chất nào là arylamine?", plainText: "Chất nào là arylamine?", options: [{key: "A", text: "CH₃NH₂."}, {key: "B", text: "CH₃CH₂NH₂."}, {key: "C", text: "C₆H₅NH₂."}, {key: "D", text: "(CH₃)₂NH."}], correctAnswer: "C" },
+                { id: "P1Q04", sourceNum: 4, text: "Tên thay thế của CH₃CH₂NH₂ là", plainText: "Tên thay thế của CH₃CH₂NH₂ là", options: [{key: "A", text: "methanamine."}, {key: "B", text: "ethanamine."}, {key: "C", text: "propanamine."}, {key: "D", text: "dimethylamine."}], correctAnswer: "B" },
+                { id: "P1Q05", sourceNum: 5, text: "Dung dịch methylamine có môi trường", plainText: "Dung dịch methylamine có môi trường", options: [{key: "A", text: "acid."}, {key: "B", text: "base."}, {key: "C", text: "trung tính trong mọi trường hợp."}, {key: "D", text: "không xác định được."}], correctAnswer: "B" },
+                { id: "P1Q06", sourceNum: 6, text: "Phản ứng nào thể hiện tính base của methylamine?", plainText: "Phản ứng nào thể hiện tính base của methylamine?", options: [{key: "A", text: "CH₃NH₂ + HCl → CH₃NH₃Cl."}, {key: "B", text: "CH₃NH₂ bị đốt cháy."}, {key: "C", text: "CH₃NH₂ bị oxi hóa."}, {key: "D", text: "CH₃NH₂ bị phân hủy nhiệt."}], correctAnswer: "A" },
+                { id: "P1Q07", sourceNum: 7, text: "Chất nào có thể góp phần tạo mùi tanh ở cá?", plainText: "Chất nào có thể góp phần tạo mùi tanh ở cá?", options: [{key: "A", text: "Trimethylamine."}, {key: "B", text: "Glucose."}, {key: "C", text: "Glycerol."}, {key: "D", text: "Sucrose."}], correctAnswer: "A" },
+                { id: "P1Q08", sourceNum: 8, text: "Aniline tác dụng với nước bromine trong điều kiện thích hợp tạo", plainText: "Aniline tác dụng với nước bromine trong điều kiện thích hợp tạo", options: [{key: "A", text: "kết tủa trắng."}, {key: "B", text: "kết tủa đỏ gạch."}, {key: "C", text: "khí hydrogen."}, {key: "D", text: "dung dịch xanh lam."}], correctAnswer: "A" },
+                { id: "P1Q09", sourceNum: 9, text: "Amino acid thường chứa đồng thời", plainText: "Amino acid thường chứa đồng thời", options: [{key: "A", text: "–OH và –CHO."}, {key: "B", text: "–NH₂ và –COOH."}, {key: "C", text: "–COO– và –OH."}, {key: "D", text: "–CHO và –COOH."}], correctAnswer: "B" },
+                { id: "P1Q10", sourceNum: 10, text: "Công thức của glycine là", plainText: "Công thức của glycine là", options: [{key: "A", text: "H₂NCH₂COOH."}, {key: "B", text: "CH₃COOH."}, {key: "C", text: "CH₃CH₂NH₂."}, {key: "D", text: "H₂NCH₂CH₂OH."}], correctAnswer: "A" },
+                { id: "P1Q11", sourceNum: 11, text: "Dạng ion lưỡng cực của glycine được biểu diễn là", plainText: "Dạng ion lưỡng cực của glycine được biểu diễn là", options: [{key: "A", text: "H₂NCH₂COOH."}, {key: "B", text: "H₃N⁺CH₂COO⁻."}, {key: "C", text: "H₃N⁺CH₂COOH."}, {key: "D", text: "H₂NCH₂COO⁻."}], correctAnswer: "B" },
+                { id: "P1Q12", sourceNum: 12, text: "Amino acid có tính lưỡng tính vì", plainText: "Amino acid có tính lưỡng tính vì", options: [{key: "A", text: "chỉ có nhóm amino."}, {key: "B", text: "chỉ có nhóm carboxyl."}, {key: "C", text: "có thể phản ứng với cả acid và base."}, {key: "D", text: "không phản ứng với acid hoặc base."}], correctAnswer: "C" },
+                { id: "P1Q13", sourceNum: 13, text: "Liên kết peptide có dạng", plainText: "Liên kết peptide có dạng", options: [{key: "A", text: "–COO–."}, {key: "B", text: "–CO–NH–."}, {key: "C", text: "–O–O–."}, {key: "D", text: "–C=C–."}], correctAnswer: "B" },
+                { id: "P1Q14", sourceNum: 14, text: "Khi hình thành một liên kết peptide giữa hai amino acid, thường tách ra", plainText: "Khi hình thành một liên kết peptide giữa hai amino acid, thường tách ra", options: [{key: "A", text: "một phân tử nước."}, {key: "B", text: "một phân tử oxygen."}, {key: "C", text: "một phân tử nitrogen."}, {key: "D", text: "một phân tử hydrogen."}], correctAnswer: "A" },
+                { id: "P1Q15", sourceNum: 15, text: "Thủy phân hoàn toàn peptide thu được", plainText: "Thủy phân hoàn toàn peptide thu được", options: [{key: "A", text: "monosaccharide."}, {key: "B", text: "amino acid cấu tạo nên peptide."}, {key: "C", text: "hydrocarbon."}, {key: "D", text: "chỉ ammonia."}], correctAnswer: "B" },
+                { id: "P1Q16", sourceNum: 16, text: "Protein có vai trò quan trọng vì", plainText: "Protein có vai trò quan trọng vì", options: [{key: "A", text: "chỉ dự trữ khoáng chất."}, {key: "B", text: "tham gia cấu tạo tế bào và nhiều quá trình sinh học."}, {key: "C", text: "chỉ vận chuyển oxygen trong mọi sinh vật."}, {key: "D", text: "không tham gia hoạt động sống."}], correctAnswer: "B" },
+                { id: "P1Q17", sourceNum: 17, text: "Hiện tượng đông tụ protein có thể quan sát khi", plainText: "Hiện tượng đông tụ protein có thể quan sát khi", options: [{key: "A", text: "đun nóng lòng trắng trứng."}, {key: "B", text: "hòa tan đường vào nước."}, {key: "C", text: "làm tan băng."}, {key: "D", text: "lọc nước muối."}], correctAnswer: "A" },
+                { id: "P1Q18", sourceNum: 18, text: "Phát biểu đúng là", plainText: "Phát biểu đúng là", options: [{key: "A", text: "Mọi amine đều có tính base mạnh như nhau."}, {key: "B", text: "Amino acid chỉ phản ứng với base."}, {key: "C", text: "Peptide có các gốc amino acid nối với nhau bằng liên kết peptide."}, {key: "D", text: "Protein luôn giữ nguyên cấu trúc khi đun nóng."}], correctAnswer: "C" }
+            ],
+            part2: [
+                { id: "P2Q01", sourceNum: 19, text: "Methylamine (CH₃NH₂) là một base yếu trong nước. Xét các phát biểu:", plainText: "Methylamine (CH₃NH₂) là một base yếu trong nước. Xét các phát biểu:",
+                  statements: [
+                      { label: "a", text: "Khi phản ứng vừa đủ với HCl, 1 mol CH₃NH₂ tạo 1 mol muối CH₃NH₃Cl.", correctAnswer: "Đúng" },
+                      { label: "b", text: "Có thể dùng dung dịch HCl để phản ứng với CH₃NH₂ vì nitrogen trong amine có khả năng nhận proton.", correctAnswer: "Đúng" },
+                      { label: "c", text: "Trong 0,20 mol CH₃NH₂, số mol HCl cần dùng để phản ứng vừa đủ là 0,10 mol.", correctAnswer: "Sai" },
+                      { label: "d", text: "Muối CH₃NH₃Cl được tạo thành có công thức chứa ion CH₃NH₃⁺.", correctAnswer: "Đúng" }
+                  ] },
+                { id: "P2Q02", sourceNum: 20, text: "Aniline (C₆H₅NH₂) phản ứng với nước bromine tạo 2,4,6-tribromoaniline kết tủa. Cho các phát biểu:", plainText: "Aniline (C₆H₅NH₂) phản ứng với nước bromine tạo 2,4,6-tribromoaniline kết tủa. Cho các phát biểu:",
+                  statements: [
+                      { label: "a", text: "Nhóm –NH₂ hoạt hóa vòng benzene, làm phản ứng thế bromine xảy ra dễ hơn benzene.", correctAnswer: "Đúng" },
+                      { label: "b", text: "Tỉ lệ mol aniline : Br₂ theo phương trình tạo 2,4,6-tribromoaniline là 1 : 3.", correctAnswer: "Đúng" },
+                      { label: "c", text: "Nếu có 0,02 mol aniline phản ứng hoàn toàn theo phương trình trên thì lượng Br₂ phản ứng là 0,06 mol.", correctAnswer: "Đúng" },
+                      { label: "d", text: "Sản phẩm 2,4,6-tribromoaniline có ba nguyên tử bromine trong phân tử.", correctAnswer: "Đúng" }
+                  ] },
+                { id: "P2Q03", sourceNum: 21, text: "Glycine có công thức H₂NCH₂COOH. Xét các phát biểu:", plainText: "Glycine có công thức H₂NCH₂COOH. Xét các phát biểu:",
+                  statements: [
+                      { label: "a", text: "Một mol glycine phản ứng vừa đủ với một mol NaOH theo nhóm –COOH.", correctAnswer: "Đúng" },
+                      { label: "b", text: "Một mol glycine có thể phản ứng với HCl theo nhóm –NH₂ với tỉ lệ mol 1:1.", correctAnswer: "Đúng" },
+                      { label: "c", text: "Trong 0,15 mol glycine, số mol NaOH cần để trung hòa nhóm –COOH là 0,30 mol.", correctAnswer: "Sai" },
+                      { label: "d", text: "Dạng ion lưỡng cực của glycine có thể biểu diễn là H₃N⁺CH₂COO⁻.", correctAnswer: "Đúng" }
+                  ] },
+                { id: "P2Q04", sourceNum: 22, text: "Một peptide mạch hở được tạo từ các gốc amino acid. Xét các phát biểu:", plainText: "Một peptide mạch hở được tạo từ các gốc amino acid. Xét các phát biểu:",
+                  statements: [
+                      { label: "a", text: "Peptide mạch hở gồm n gốc amino acid thì có n − 1 liên kết peptide.", correctAnswer: "Đúng" },
+                      { label: "b", text: "Một tetrapeptide mạch hở có 3 liên kết peptide.", correctAnswer: "Đúng" },
+                      { label: "c", text: "Thủy phân hoàn toàn 1 mol dipeptide tạo bởi hai amino acid khác nhau thu được tổng cộng 2 mol amino acid.", correctAnswer: "Đúng" },
+                      { label: "d", text: "Một pentapeptide mạch hở có 5 liên kết peptide.", correctAnswer: "Sai" }
+                  ] }
+            ],
+            part3: [
+                { id: "P3Q01", sourceNum: 23, text: "Cho 0,12 mol methylamine phản ứng vừa đủ với hydrochloric acid. Tính số mol HCl đã phản ứng. (Điền số, đơn vị mol không ghi)", plainText: "Cho 0,12 mol methylamine phản ứng vừa đủ với hydrochloric acid. Tính số mol HCl đã phản ứng.", correctAnswer: "0,12", acceptedAnswers: ["0,12", "0.12"] },
+                { id: "P3Q02", sourceNum: 24, text: "Cho 0,015 mol aniline phản ứng hoàn toàn với bromine dư tạo 2,4,6-tribromoaniline. Tính số mol Br₂ đã phản ứng. (Điền số, đơn vị mol không ghi)", plainText: "Cho 0,015 mol aniline phản ứng hoàn toàn với bromine dư tạo 2,4,6-tribromoaniline. Tính số mol Br₂ đã phản ứng.", correctAnswer: "0,045", acceptedAnswers: ["0,045", "0.045"] },
+                { id: "P3Q03", sourceNum: 25, text: "Một phân tử amino acid có một nhóm –NH₂ và một nhóm –COOH. Có bao nhiêu mol NaOH cần để phản ứng vừa đủ với 0,08 mol amino acid theo nhóm –COOH? (Điền số)", plainText: "Một phân tử amino acid có một nhóm –NH₂ và một nhóm –COOH. Có bao nhiêu mol NaOH cần để phản ứng vừa đủ với 0,08 mol amino acid theo nhóm –COOH?", correctAnswer: "0,08", acceptedAnswers: ["0,08", "0.08"] },
+                { id: "P3Q04", sourceNum: 26, text: "Có bao nhiêu đồng phân cấu tạo amine mạch hở, phân nhánh ứng với công thức phân tử C5H13N tác dụng với nitrous acid ở nhiệt độ thường tạo thành alcohol và giải phóng nitrogen?", plainText: "Có bao nhiêu đồng phân cấu tạo amine mạch hở, phân nhánh ứng với công thức phân tử C5H13N tác dụng với nitrous acid ở nhiệt độ thường tạo thành alcohol và giải phóng nitrogen?", correctAnswer: "5", acceptedAnswers: ["5", "5.0", "5,0"] },
+                { id: "P3Q05", sourceNum: 27, text: "Một peptide mạch hở có 7 gốc amino acid. Hỏi có bao nhiêu liên kết peptide trong phân tử?", plainText: "Một peptide mạch hở có 7 gốc amino acid. Hỏi có bao nhiêu liên kết peptide trong phân tử?", correctAnswer: "6", acceptedAnswers: ["6", "6.0", "6,0"] },
+                { id: "P3Q06", sourceNum: 28, text: "Một mẫu aniline có số mol 0,025 mol phản ứng hoàn toàn với bromine dư theo phương trình tạo 2,4,6-tribromoaniline. Tính số mol kết tủa tạo thành, giả sử hiệu suất phản ứng 80%.", plainText: "Một mẫu aniline có số mol 0,025 mol phản ứng hoàn toàn với bromine dư theo phương trình tạo 2,4,6-tribromoaniline. Tính số mol kết tủa tạo thành, giả sử hiệu suất phản ứng 80%.", correctAnswer: "0,020", acceptedAnswers: ["0,020", "0.020", "0,02", "0.02"] }
+            ]
+        };
+        
+        let state = {
+            attemptId: "",
+            studentName: "",
+            studentClass: "",
+            started: false,
+            isSubmitting: false,
+            isSubmitted: false,
+            answersRevealed: false,
+            startClientMs: 0,
+            serverStartTime: "",
+            shuffled: { part1: [], part2: [], part3: [] },
+            answers: { part1: {}, part2: {}, part3: {} },
+            timerInterval: null
+        };
+        
+        // Fisher-Yates Shuffle an toàn bằng crypto
+        function secureShuffle(array) {
+            let arr = [...array];
+            let currentIndex = arr.length, randomIndex;
+            const randomBytes = new Uint32Array(1);
+            while (currentIndex !== 0) {
+                window.crypto.getRandomValues(randomBytes);
+                randomIndex = randomBytes[0] % currentIndex;
+                currentIndex--;
+                [arr[currentIndex], arr[randomIndex]] = [arr[randomIndex], arr[currentIndex]];
+            }
+            return arr;
+        }
+        // Tạo UUID
+        function generateUUID() {
+            if (crypto.randomUUID) return crypto.randomUUID();
+            return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+                (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+            );
+        }
+        // Cập nhật số lượng câu đã trả lời
+        function updateProgress() {
+            let count = 0;
+            // Part 1
+            count += Object.keys(state.answers.part1).length;
+            // Part 2 - Tính là 1 câu khi chọn đủ 4 ý
+            examSource.part2.forEach(q => {
+                const ansObj = state.answers.part2[q.id] || {};
+                if (Object.keys(ansObj).length === 4) count++;
+            });
+            // Part 3
+            count += Object.keys(state.answers.part3).filter(k => state.answers.part3[k].trim() !== "").length;
+            
+            document.getElementById('progress-count').innerText = count;
+        }
+        
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (state.started) return;
+            
+            const nameInput = document.getElementById('studentName').value.trim();
+            const classInput = document.getElementById('studentClass').value.trim();
+            if (!nameInput || !classInput) return;
+            const btnStart = document.getElementById('btn-start');
+            const spinner = document.getElementById('start-spinner');
+            const errorDiv = document.getElementById('login-error');
+            
+            btnStart.disabled = true;
+            spinner.classList.remove('hidden');
+            errorDiv.classList.add('hidden');
+            state.attemptId = generateUUID();
+            state.studentName = nameInput;
+            state.studentClass = classInput;
+            const payload = {
+                action: "START",
+                hoTen: state.studentName,
+                lop: state.studentClass,
+                attemptId: state.attemptId
+            };
+            try {
+                let data;
+                // Nếu chưa thay URL thật, tự động dùng chế độ chạy thử
+                if (APPS_SCRIPT_WEB_APP_URL === "DAN_URL_WEB_APP_APPS_SCRIPT_VAO_DAY") {
+                    console.warn("Chế độ Mock: Bỏ qua fetch vì chưa có URL Google Apps Script.");
+                    await new Promise(r => setTimeout(r, 600)); // Giả lập mạng
+                    data = { status: "SUCCESS", thoiGianVaoLam: new Date().toLocaleString() };
+                } else {
+                    const response = await fetch(APPS_SCRIPT_WEB_APP_URL, {
+                        method: "POST",
+                        headers: { "Content-Type": "text/plain;charset=utf-8" },
+                        body: JSON.stringify(payload),
+                        redirect: "follow"
+                    });
+                    data = await response.json();
+                }
+                
+                if (data.status === "SUCCESS") {
+                    state.serverStartTime = data.thoiGianVaoLam || new Date().toLocaleString();
+                    startExam();
+                } else {
+                    throw new Error(data.message || "Lỗi không xác định từ máy chủ.");
+                }
+            } catch (error) {
+                console.error("START Error:", error);
+                errorDiv.innerText = "Không thể bắt đầu: " + (error.message || "Kiểm tra kết nối mạng hoặc URL Web App.");
+                errorDiv.classList.remove('hidden');
+                btnStart.disabled = false;
+                spinner.classList.add('hidden');
+            }
+        });
+        function startExam() {
+            state.started = true;
+            state.startClientMs = Date.now();
+            
+            // Xáo trộn đề từng phần
+            state.shuffled.part1 = secureShuffle(examSource.part1);
+            state.shuffled.part2 = secureShuffle(examSource.part2);
+            state.shuffled.part3 = secureShuffle(examSource.part3);
+            // Chuyển UI
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('test-screen').classList.remove('hidden');
+            document.getElementById('display-name').innerText = state.studentName;
+            document.getElementById('display-class').innerText = state.studentClass;
+            
+            window.scrollTo(0, 0);
+            renderQuestions();
+            startTimer();
+        }
+        function renderQuestions() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = "";
+            // PHẦN 1
+            let html = `<div class="glass-panel p-6 rounded-2xl mb-8"><h3 class="text-xl font-bold text-pink-600 mb-4 border-b pb-2 uppercase">Phần 1: Trắc nghiệm nhiều lựa chọn (4,5 điểm)</h3><div class="space-y-8">`;
+            state.shuffled.part1.forEach((q, idx) => {
+                html += `
+                <div class="q-block" id="block-${q.id}">
+                    <div class="font-semibold text-slate-800 mb-3"><span class="text-indigo-600 mr-1">Câu ${idx + 1}.</span> ${q.text}</div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        ${q.options.map(opt => `
+                            <label class="option-label" id="lbl-${q.id}-${opt.key}">
+                                <div class="custom-radio">
+                                    <input type="radio" name="${q.id}" value="${opt.key}" onchange="handleP1Change('${q.id}', '${opt.key}')">
+                                    <span class="radio-mark"></span>
+                                </div>
+                                <span class="font-bold mr-2 text-slate-600">${opt.key}.</span>
+                                <span class="option-text">${opt.text}</span>
+                            </label>
+                        `).join('')}
+                    </div>
+                    <div id="ans-${q.id}" class="mt-3 text-sm hidden font-medium"></div>
+                </div>`;
+            });
+            html += `</div></div>`;
+            // PHẦN 2
+            html += `<div class="glass-panel p-6 rounded-2xl mb-8"><h3 class="text-xl font-bold text-pink-600 mb-4 border-b pb-2 uppercase">Phần 2: Trắc nghiệm Đúng/Sai (4,0 điểm)</h3><div class="space-y-8">`;
+            state.shuffled.part2.forEach((q, idx) => {
+                html += `
+                <div class="q-block" id="block-${q.id}">
+                    <div class="font-semibold text-slate-800 mb-3"><span class="text-indigo-600 mr-1">Câu ${idx + 1}.</span> ${q.text}</div>
+                    <div class="space-y-3">
+                        ${q.statements.map(stmt => `
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-slate-50 border border-slate-200 rounded-lg">
+                                <div class="flex-1 text-slate-700 pr-4"><span class="font-bold mr-1">${stmt.label})</span> ${stmt.text}</div>
+                                <div class="flex gap-2 shrink-0">
+                                    <button type="button" id="btn-${q.id}-${stmt.label}-true" class="tf-btn" onclick="handleP2Change('${q.id}', '${stmt.label}', 'Đúng')">Đúng</button>
+                                    <button type="button" id="btn-${q.id}-${stmt.label}-false" class="tf-btn" onclick="handleP2Change('${q.id}', '${stmt.label}', 'Sai')">Sai</button>
+                                </div>
+                            </div>
+                            <div id="ans-${q.id}-${stmt.label}" class="text-sm hidden mt-1 ml-2 font-medium"></div>
+                        `).join('')}
+                    </div>
+                </div>`;
+            });
+            html += `</div></div>`;
+            // PHẦN 3
+            html += `<div class="glass-panel p-6 rounded-2xl"><h3 class="text-xl font-bold text-pink-600 mb-4 border-b pb-2 uppercase">Phần 3: Trả lời ngắn (1,5 điểm)</h3><div class="space-y-8">`;
+            state.shuffled.part3.forEach((q, idx) => {
+                html += `
+                <div class="q-block" id="block-${q.id}">
+                    <div class="font-semibold text-slate-800 mb-3"><span class="text-indigo-600 mr-1">Câu ${idx + 1}.</span> ${q.text}</div>
+                    <div>
+                        <input type="text" id="input-${q.id}" oninput="handleP3Change('${q.id}', this.value)" 
+                            class="w-full sm:w-1/2 px-4 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                            placeholder="Nhập câu trả lời của bạn..." autocomplete="off">
+                    </div>
+                    <div id="ans-${q.id}" class="mt-3 text-sm hidden font-medium"></div>
+                </div>`;
+            });
+            html += `</div></div>`;
+            container.innerHTML = html;
+            // Kích hoạt MathJax render cho các công thức sinh ra động
+            if (window.MathJax) {
+                MathJax.typesetPromise().catch((err) => console.log('MathJax error: ', err));
+            }
+        }
+        
+        function handleP1Change(qId, val) {
+            if (state.isSubmitted) return;
+            state.answers.part1[qId] = val;
+            updateProgress();
+        }
+        function handleP2Change(qId, label, val) {
+            if (state.isSubmitted) return;
+            if (!state.answers.part2[qId]) state.answers.part2[qId] = {};
+            state.answers.part2[qId][label] = val;
+            
+            // Cập nhật UI nút T/F
+            const btnTrue = document.getElementById(`btn-${qId}-${label}-true`);
+            const btnFalse = document.getElementById(`btn-${qId}-${label}-false`);
+            
+            btnTrue.classList.remove('selected-true');
+            btnFalse.classList.remove('selected-false');
+            
+            if (val === 'Đúng') btnTrue.classList.add('selected-true');
+            if (val === 'Sai') btnFalse.classList.add('selected-false');
+            
+            updateProgress();
+        }
+        function handleP3Change(qId, val) {
+            if (state.isSubmitted) return;
+            state.answers.part3[qId] = val;
+            updateProgress();
+        }
+        
+        function startTimer() {
+            const display = document.getElementById('timer-display');
+            
+            state.timerInterval = setInterval(() => {
+                if (state.isSubmitted) {
+                    clearInterval(state.timerInterval);
+                    return;
+                }
+                
+                const now = Date.now();
+                const elapsedSec = Math.floor((now - state.startClientMs) / 1000);
+                const remainingSec = TOTAL_TIME_SEC - elapsedSec;
+                
+                if (remainingSec <= 0) {
+                    clearInterval(state.timerInterval);
+                    display.innerText = "00:00";
+                    if (!state.isSubmitting && !state.isSubmitted) {
+                        alert("Đã hết thời gian làm bài. Hệ thống sẽ tự động nộp bài.");
+                        processSubmission();
+                    }
+                    return;
+                }
+                const m = Math.floor(remainingSec / 60).toString().padStart(2, '0');
+                const s = (remainingSec % 60).toString().padStart(2, '0');
+                display.innerText = `${m}:${s}`;
+                if (remainingSec <= 60) {
+                    display.classList.add('time-critical');
+                    display.classList.remove('time-warning');
+                } else if (remainingSec <= 300) {
+                    display.classList.add('time-warning');
+                }
+            }, 1000);
+        }
+        document.getElementById('btn-submit').addEventListener('click', () => {
+            if (state.isSubmitted || state.isSubmitting) return;
+            if (confirm("Em có chắc chắn muốn nộp bài? Hãy kiểm tra lại các câu chưa làm.")) {
+                processSubmission();
+            }
+        });
+        
+        // So sánh cho câu Trả lời ngắn, chấp nhận format số
+        function isShortAnswerCorrect(student, keyObj) {
+            if (!student) return false;
+            let s = student.trim().toLowerCase();
+            let keys = keyObj.acceptedAnswers.map(k => k.trim().toLowerCase());
+            if (keys.includes(s)) return true;
+            // Xử lý dấu phẩy, khoảng trắng
+            let normS = s.replace(/,/g, '.').replace(/\s+/g, '');
+            for (let k of keys) {
+                let normK = k.replace(/,/g, '.').replace(/\s+/g, '');
+                if (normS === normK) return true;
+                
+                // So sánh dạng số nếu parse được
+                let numS = parseFloat(normS);
+                let numK = parseFloat(normK);
+                if (!isNaN(numS) && !isNaN(numK) && Math.abs(numS - numK) < 0.0001) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        async function processSubmission() {
+            state.isSubmitting = true;
+            clearInterval(state.timerInterval);
+            
+            // Khóa giao diện
+            document.querySelectorAll('input, button.tf-btn').forEach(el => {
+                el.disabled = true;
+                if (el.tagName === 'LABEL') el.classList.add('locked');
+                if (el.tagName === 'BUTTON') el.classList.add('locked');
+            });
+            document.querySelectorAll('.option-label').forEach(el => el.classList.add('locked'));
+            
+            const btnSubmit = document.getElementById('btn-submit');
+            const spinnerSubmit = document.getElementById('submit-spinner');
+            btnSubmit.classList.add('cursor-not-allowed', 'opacity-80');
+            spinnerSubmit.classList.remove('hidden');
+            const thoiGianLamGiay = Math.floor((Date.now() - state.startClientMs) / 1000);
+            // Chấm điểm và tạo chiTietBaiLam
+            let scoreP1 = 0, scoreP2 = 0, scoreP3 = 0;
+            let soDung = 0, soSai = 0, soChuaLam = 0;
+            const chiTietBaiLam = [];
+            // Chấm P1
+            state.shuffled.part1.forEach((q, idx) => {
+                const sAns = state.answers.part1[q.id] || "";
+                const isCorrect = sAns === q.correctAnswer;
+                const isComplete = sAns !== "";
+                const score = isCorrect ? 0.25 : 0;
+                
+                scoreP1 += score;
+                if (!isComplete) soChuaLam++;
+                else if (isCorrect) soDung++;
+                else soSai++;
+                chiTietBaiLam.push({
+                    part: 1, order: idx + 1, questionId: q.id,
+                    questionText: q.plainText, sourceType: "multiple_choice", mediaSrc: "",
+                    studentAnswer: sAns, correctAnswer: q.correctAnswer,
+                    isCorrect: isCorrect, isComplete: isComplete,
+                    score: score, maxScore: 0.25, statements: []
+                });
+            });
+            // Chấm P2
+            const p2ScoreMap = { 0: 0, 1: 0.10, 2: 0.25, 3: 0.50, 4: 1.00 };
+            state.shuffled.part2.forEach((q, idx) => {
+                const sAnsObj = state.answers.part2[q.id] || {};
+                let correctCount = 0;
+                let isComplete = true;
+                const stmts = [];
+                const sAnsTextArr = [];
+                const cAnsTextArr = [];
+                q.statements.forEach(stmt => {
+                    const s = sAnsObj[stmt.label] || "";
+                    if (!s) isComplete = false;
+                    const isStmtCorrect = s === stmt.correctAnswer;
+                    if (isStmtCorrect && s !== "") correctCount++;
+                    
+                    sAnsTextArr.push(`${stmt.label}: ${s || "_"}`);
+                    cAnsTextArr.push(`${stmt.label}: ${stmt.correctAnswer}`);
+                    stmts.push({
+                        label: stmt.label, text: stmt.text,
+                        studentAnswer: s, correctAnswer: stmt.correctAnswer, isCorrect: isStmtCorrect
+                    });
+                });
+                const score = p2ScoreMap[correctCount] || 0;
+                scoreP2 += score;
+                const isAllCorrect = correctCount === 4;
+                if (!isComplete) soChuaLam++;
+                else if (isAllCorrect) soDung++;
+                else soSai++; 
+                chiTietBaiLam.push({
+                    part: 2, order: idx + 1, questionId: q.id,
+                    questionText: q.plainText, sourceType: "true_false", mediaSrc: "",
+                    studentAnswer: sAnsTextArr.join("; "), correctAnswer: cAnsTextArr.join("; "),
+                    isCorrect: isAllCorrect, isComplete: isComplete,
+                    score: score, maxScore: 1.00, statements: stmts
+                });
+            });
+            // Chấm P3
+            state.shuffled.part3.forEach((q, idx) => {
+                const sAns = (state.answers.part3[q.id] || "").trim();
+                const isCorrect = isShortAnswerCorrect(sAns, q);
+                const isComplete = sAns !== "";
+                const score = isCorrect ? 0.25 : 0;
+                
+                scoreP3 += score;
+                if (!isComplete) soChuaLam++;
+                else if (isCorrect) soDung++;
+                else soSai++;
+                chiTietBaiLam.push({
+                    part: 3, order: idx + 1, questionId: q.id,
+                    questionText: q.plainText, sourceType: "short_answer", mediaSrc: "",
+                    studentAnswer: sAns, correctAnswer: q.correctAnswer,
+                    isCorrect: isCorrect, isComplete: isComplete,
+                    score: score, maxScore: 0.25, statements: []
+                });
+            });
+            const tongDiem = Math.round((scoreP1 + scoreP2 + scoreP3) * 100) / 100;
+            const payload = {
+                action: "SUBMIT",
+                hoTen: state.studentName,
+                lop: state.studentClass,
+                attemptId: state.attemptId,
+                mon: "Hóa học 12",
+                diem: tongDiem,
+                soDung: soDung,
+                soSai: soSai,
+                soChuaLam: soChuaLam,
+                tongSoCau: 28,
+                diemPhan1: scoreP1,
+                diemPhan2: scoreP2,
+                diemPhan3: scoreP3,
+                thoiGianVaoLam: state.serverStartTime,
+                thoiGianLamGiay: thoiGianLamGiay,
+                chiTietBaiLam: chiTietBaiLam
+            };
+            try {
+                let data;
+                // Nếu chưa thay URL thật, giả lập lưu thành công
+                if (APPS_SCRIPT_WEB_APP_URL === "DAN_URL_WEB_APP_APPS_SCRIPT_VAO_DAY") {
+                    await new Promise(r => setTimeout(r, 1000)); // Giả lập mạng
+                    data = { status: "SUCCESS", driveSaved: true };
+                } else {
+                    const response = await fetch(APPS_SCRIPT_WEB_APP_URL, {
+                        method: "POST",
+                        headers: { "Content-Type": "text/plain;charset=utf-8" },
+                        body: JSON.stringify(payload),
+                        redirect: "follow"
+                    });
+                    data = await response.json();
+                }
+                state.isSubmitted = true;
+                showResult(payload, data);
+            } catch (error) {
+                console.error("SUBMIT Error:", error);
+                alert("Lỗi khi lưu điểm lên hệ thống. Vui lòng thử bấm nộp lại hoặc báo giáo viên.\nLỗi: " + error.message);
+                state.isSubmitting = false;
+                btnSubmit.classList.remove('cursor-not-allowed', 'opacity-80');
+                spinnerSubmit.classList.add('hidden');
+            }
+        }
+        function showResult(payload, responseData) {
+            document.getElementById('res-name').innerText = state.studentName;
+            document.getElementById('res-class').innerText = state.studentClass;
+            document.getElementById('res-total-score').innerText = payload.diem.toFixed(2);
+            document.getElementById('res-p1-score').innerText = payload.diemPhan1.toFixed(2);
+            document.getElementById('res-p2-score').innerText = payload.diemPhan2.toFixed(2);
+            document.getElementById('res-p3-score').innerText = payload.diemPhan3.toFixed(2);
+            
+            const mins = Math.floor(payload.thoiGianLamGiay / 60);
+            const secs = payload.thoiGianLamGiay % 60;
+            document.getElementById('res-duration').innerText = `${mins} phút ${secs} giây`;
+            const driveStatusEl = document.getElementById('res-drive-status');
+            const driveIconEl = document.getElementById('icon-drive-status');
+            if (responseData.status !== "SUCCESS") {
+                document.getElementById('res-sheet-status').innerText = "Có lỗi xảy ra khi lưu điểm!";
+                document.getElementById('res-sheet-status').classList.replace('text-green-500', 'text-red-500');
+            }
+            if (responseData.driveSaved === false) {
+                driveStatusEl.innerText = "Điểm đã lưu nhưng hồ sơ Drive bị lỗi. Hãy báo GV.";
+                driveStatusEl.classList.add('text-red-600');
+                driveIconEl.classList.replace('text-green-500', 'text-red-500');
+                driveIconEl.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>';
+            }
+            document.getElementById('result-modal').classList.remove('hidden');
+        }
+        
+        document.getElementById('btn-show-answers').addEventListener('click', () => {
+            if (!state.isSubmitted) return;
+            state.answersRevealed = true;
+            document.getElementById('result-modal').classList.add('hidden');
+            
+            // Xóa nút submit
+            document.getElementById('btn-submit').parentElement.classList.add('hidden');
+            // Render đáp án P1
+            state.shuffled.part1.forEach(q => {
+                const sAns = state.answers.part1[q.id];
+                const cAns = q.correctAnswer;
+                const ansDiv = document.getElementById(`ans-${q.id}`);
+                
+                if (sAns) document.getElementById(`lbl-${q.id}-${sAns}`).classList.add(sAns === cAns ? 'ring-2' : 'ring-2', sAns === cAns ? 'ring-green-500' : 'ring-red-500', 'bg-slate-50');
+                document.getElementById(`lbl-${q.id}-${cAns}`).classList.add('bg-green-100', 'border-green-400');
+                
+                ansDiv.innerHTML = sAns === cAns ? `<span class="text-green-600">✓ Đúng</span>` : `<span class="text-red-600">✗ Sai. Đáp án đúng: ${cAns}</span>`;
+                ansDiv.classList.remove('hidden');
+            });
+            // Render đáp án P2
+            state.shuffled.part2.forEach(q => {
+                const sAnsObj = state.answers.part2[q.id] || {};
+                let pts = 0, count = 0;
+                
+                q.statements.forEach(stmt => {
+                    const s = sAnsObj[stmt.label];
+                    const c = stmt.correctAnswer;
+                    const ansDiv = document.getElementById(`ans-${q.id}-${stmt.label}`);
+                    
+                    if (s === c) count++;
+                    ansDiv.innerHTML = s === c ? `<span class="text-green-600">✓ Đúng</span>` : `<span class="text-red-600">✗ Sai. Đáp án là: ${c}</span>`;
+                    ansDiv.classList.remove('hidden');
+                });
+                
+                const p2ScoreMap = { 0: 0, 1: 0.10, 2: 0.25, 3: 0.50, 4: 1.00 };
+                pts = p2ScoreMap[count] || 0;
+                
+                const header = document.getElementById(`block-${q.id}`).querySelector('div:first-child');
+                header.innerHTML += ` <span class="text-pink-600 ml-2">[Đạt ${pts} điểm]</span>`;
+            });
+            // Render đáp án P3
+            state.shuffled.part3.forEach(q => {
+                const sAns = (state.answers.part3[q.id] || "").trim();
+                const isCorrect = isShortAnswerCorrect(sAns, q);
+                const ansDiv = document.getElementById(`ans-${q.id}`);
+                const input = document.getElementById(`input-${q.id}`);
+                
+                input.classList.add(isCorrect ? 'bg-green-50' : 'bg-red-50', isCorrect ? 'border-green-400' : 'border-red-400', 'text-slate-900');
+                
+                ansDiv.innerHTML = isCorrect 
+                    ? `<span class="text-green-600">✓ Đúng</span>` 
+                    : `<span class="text-red-600">✗ Sai. Đáp án đúng: <strong class="text-indigo-700">${q.correctAnswer}</strong></span>`;
+                ansDiv.classList.remove('hidden');
+            });
+            window.scrollTo(0, 0);
+        });
+        document.getElementById('btn-logout').addEventListener('click', () => {
+            window.location.reload();
+        });
+    </script>
+</body>
+</html>
+
